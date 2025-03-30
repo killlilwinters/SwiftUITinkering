@@ -94,7 +94,7 @@ struct NestingListRowsView: View {
             .overlay {
                 VStack {
                     Spacer()
-                    TabBarView()
+//                    TabBarView()
                 }
             }
         }
