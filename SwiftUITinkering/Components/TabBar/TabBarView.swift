@@ -117,10 +117,8 @@ struct TabBarView: View {
                     ZStack {
                         
                         // Blur
-                        // https://stackoverflow.com/a/62350667
-                        BackdropBlurView(radius: 10)
-                            .padding(-20)
-                            .clipShape(roundedRectangle)
+                        roundedRectangle
+                            .fill(.ultraThinMaterial)
                         
                         // Dynamic circle positioned behind selected tab
                         circle

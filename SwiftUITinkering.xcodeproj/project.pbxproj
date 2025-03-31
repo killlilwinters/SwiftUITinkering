@@ -6,6 +6,25 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E9973CF92D9AED0D0000CF60 /* RippleAnimation in Frameworks */ = {isa = PBXBuildFile; productRef = E9973CF82D9AED0D0000CF60 /* RippleAnimation */; };
+		E9973CFC2D9AEE420000CF60 /* RippleAnimation in Frameworks */ = {isa = PBXBuildFile; productRef = E9973CFB2D9AEE420000CF60 /* RippleAnimation */; };
+		E9973D012D9AEFCC0000CF60 /* RippleAnimation in Frameworks */ = {isa = PBXBuildFile; productRef = E9973D002D9AEFCC0000CF60 /* RippleAnimation */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E9973CF22D9AE7E50000CF60 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		E9774C9D2D8454A80024D65D /* SwiftUITinkering.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftUITinkering.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -23,6 +42,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E9973CF92D9AED0D0000CF60 /* RippleAnimation in Frameworks */,
+				E9973D012D9AEFCC0000CF60 /* RippleAnimation in Frameworks */,
+				E9973CFC2D9AEE420000CF60 /* RippleAnimation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,6 +77,7 @@
 				E9774C992D8454A80024D65D /* Sources */,
 				E9774C9A2D8454A80024D65D /* Frameworks */,
 				E9774C9B2D8454A80024D65D /* Resources */,
+				E9973CF22D9AE7E50000CF60 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -65,6 +88,9 @@
 			);
 			name = SwiftUITinkering;
 			packageProductDependencies = (
+				E9973CF82D9AED0D0000CF60 /* RippleAnimation */,
+				E9973CFB2D9AEE420000CF60 /* RippleAnimation */,
+				E9973D002D9AEFCC0000CF60 /* RippleAnimation */,
 			);
 			productName = ConcurrencyTesting;
 			productReference = E9774C9D2D8454A80024D65D /* SwiftUITinkering.app */;
@@ -94,6 +120,9 @@
 			);
 			mainGroup = E9774C942D8454A80024D65D;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E9973CFF2D9AEFCC0000CF60 /* XCLocalSwiftPackageReference "RippleAnimation" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E9774C9E2D8454A80024D65D /* Products */;
 			projectDirPath = "";
@@ -339,6 +368,28 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		E9973CFF2D9AEFCC0000CF60 /* XCLocalSwiftPackageReference "RippleAnimation" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = RippleAnimation;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E9973CF82D9AED0D0000CF60 /* RippleAnimation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RippleAnimation;
+		};
+		E9973CFB2D9AEE420000CF60 /* RippleAnimation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RippleAnimation;
+		};
+		E9973D002D9AEFCC0000CF60 /* RippleAnimation */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RippleAnimation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E9774C952D8454A80024D65D /* Project object */;
 }

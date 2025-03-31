@@ -16,17 +16,16 @@ struct TabBarExampleView: View {
                     .scaledToFit()
             }
             TabItemView(systemImage: "checklist") {
-                Image(systemName: "checklist")
-                    .resizable()
-                    .scaledToFit()
+                NestingListRowsView()
             }
             TabItemView(systemImage: "sparkles") {
                 Text("Sparkles")
                     .font(.system(size: 36))
             }
             TabItemView(systemImage: "gearshape") {
-                Text("Gearshape")
-                    .font(.system(size: 36))
+                Image(.turtlerock)
+                    .resizable()
+                    .ignoresSafeArea()
             }
         }
     }

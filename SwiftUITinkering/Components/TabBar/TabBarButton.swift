@@ -28,12 +28,11 @@ struct TabBarButton: View {
     
     var body: some View {
         Button {
-            withAnimation(.bouncy(duration: 0.25)) {
-                selectedItem = buttonPosition
-                animate.toggle()
-            }
+            selectedItem = buttonPosition
+            animate.toggle()
         } label: {
             labelFor(systemImage)
+                .animation(.bouncy(duration: 0.25), value: animate)
                 .symbolEffect(.bounce.down.wholeSymbol, options: .nonRepeating, value: animate)
                 .symbolEffect(.bounce.down.wholeSymbol, options: .nonRepeating)
         }

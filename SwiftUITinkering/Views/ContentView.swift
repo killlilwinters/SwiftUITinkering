@@ -6,12 +6,14 @@
 //
 
 import SwiftUI
+import RippleAnimation
 
 struct ContentView: View {
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
+                NavigationLink("Saved", value: "SavedView")
                 NavigationLink("Tab bar", value: "TabBar")
                 NavigationLink("Custom shapes", value: "CustomShapes")
                 NavigationLink("Drawing", value: "DrawingView")
@@ -20,6 +22,8 @@ struct ContentView: View {
             .padding(.horizontal, 20)
             .navigationDestination(for: String.self) { string in
                 switch string {
+                case "SavedView":
+                    SavedView()
                 case "TabBar":
                     TabBarExampleView()
                 case "CustomShapes":
