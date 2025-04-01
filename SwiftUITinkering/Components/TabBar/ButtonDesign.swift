@@ -7,15 +7,16 @@
 
 import SwiftUI
 
-struct ButtonDesign: View {
+struct CenterTabButton: View {
     
     let width: CGFloat
     let height: CGFloat
     let cornerRadius: CGFloat
+    let action: () -> Void
     
     var body: some View {
         Button {
-            print("Button tapped")
+            action()
         } label: {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .fill(.addButton)
@@ -32,5 +33,5 @@ struct ButtonDesign: View {
 }
 
 #Preview {
-    ButtonDesign(width: 100, height: 100, cornerRadius: 20)
+    CenterTabButton(width: 100, height: 100, cornerRadius: 20) { }
 }

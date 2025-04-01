@@ -8,24 +8,30 @@
 import SwiftUI
 
 struct TabBarExampleView: View {
+    
+    let overlayView = GradientView(color: .addButton)
+    
     var body: some View {
-        TabBarView {
+        TabBarView(overlay: overlayView) {
             TabItemView(systemImage: "house") {
                 Image(systemName: "house")
                     .resizable()
                     .scaledToFit()
+                    .frame(width: 200, height: 200)
             }
             TabItemView(systemImage: "checklist") {
-                NestingListRowsView()
+                Image(systemName: "checklist")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
             }
             TabItemView(systemImage: "sparkles") {
                 Text("Sparkles")
                     .font(.system(size: 36))
             }
             TabItemView(systemImage: "gearshape") {
-                Image(.turtlerock)
-                    .resizable()
-                    .ignoresSafeArea()
+                Text("Gearshape")
+                    .font(.system(size: 36))
             }
         }
     }

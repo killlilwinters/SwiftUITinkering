@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import RippleAnimation
 
 struct TabItemView<Content: View>: View {
     let systemImage: String
@@ -35,12 +36,15 @@ private struct TabItem {
 }
 
 // MARK: - Tab Bar View
-struct TabBarView: View {
+struct TabBarView<Content: View>: View {
     @State private var selectedItem: Int = 0
+    @State private var isOverlayPresented: Bool = false
+    @State private var overlayRippleLocaiton: CGPoint = .zero
     
     @State private var buttonFrames: [Int: CGRect] = [:]
     
     private let tabs: [TabItem?]
+    private let overlay: Content
     
     private let width = UIScreen.main.bounds.width
     private let roundedRectangle = RoundedRectangle(cornerRadius: 45)
@@ -54,6 +58,7 @@ struct TabBarView: View {
     }
     
     init(
+        overlay: Content,
         @ViewBuilder content: () -> TupleView<(
             TabItemView<some View>,
             TabItemView<some View>
@@ -66,9 +71,11 @@ struct TabBarView: View {
         items.append(TabItem(systemImage: tuple.1.systemImage, content: tuple.1.content))
         
         self.tabs = items
+        self.overlay = overlay
     }
     
     init(
+        overlay: Content,
         @ViewBuilder content: () -> TupleView<(
             TabItemView<some View>,
             TabItemView<some View>,
@@ -86,11 +93,14 @@ struct TabBarView: View {
         items.append(TabItem(systemImage: tuple.3.systemImage, content: tuple.3.content))
         
         self.tabs = items
+        self.overlay = overlay
     }
     
     var body: some View {
         ZStack {
+            
             tabs[selectedItem]?.content
+            
             VStack {
                 Spacer()
                 HStack {
@@ -141,6 +151,18 @@ struct TabBarView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay {
+            if isOverlayPresented {
+                overlay
+                    .transition(.reverseRipple(location: overlayRippleLocaiton))
+                    .onTapGesture {
+                        withAnimation {
+                            isOverlayPresented.toggle()
+                        }
+                    }
+            }
+        }
     }
     
     func build2Tabs() -> some View {
@@ -152,7 +174,7 @@ struct TabBarView: View {
                 selectedItem: $selectedItem
             )
             Spacer()
-            ButtonDesign(width: 55, height: 55, cornerRadius: 12)
+            centerButton()
             Spacer()
             TabBarButton(
                 systemImage: tabs[1]?.systemImage,
@@ -178,7 +200,7 @@ struct TabBarView: View {
                 selectedItem: $selectedItem
             )
             Spacer()
-            ButtonDesign(width: 55, height: 55, cornerRadius: 12)
+            centerButton()
             Spacer()
             TabBarButton(
                 systemImage: tabs[2]?.systemImage,
@@ -193,6 +215,21 @@ struct TabBarView: View {
             )
         }
     }
+    
+    func centerButton() -> some View {
+        GeometryReader { proxy in
+            let frame = proxy.frame(in: .global)
+            
+            CenterTabButton(width: 55, height: 55, cornerRadius: 12) {
+                withAnimation(.linear(duration: 0.5)) {
+                    overlayRippleLocaiton = .init(x: frame.midX, y: frame.midY)
+                    isOverlayPresented = true
+                }
+            }
+            
+        }
+        .frame(width: 55, height: 55)
+    }
 }
 
 // MARK: - Preference Key for Tracking Button Frames
@@ -206,24 +243,5 @@ struct TabButtonFramePreferenceKey: PreferenceKey {
 
 // MARK: - Preview
 #Preview {
-    TabBarView {
-        TabItemView(systemImage: "house") {
-            Image(systemName: "house")
-                .resizable()
-                .scaledToFit()
-        }
-        TabItemView(systemImage: "checklist") {
-            Image(systemName: "checklist")
-                .resizable()
-                .scaledToFit()
-        }
-        TabItemView(systemImage: "sparkles") {
-            Text("Sparkles")
-                .font(.system(size: 36))
-        }
-        TabItemView(systemImage: "gearshape") {
-            Text("Gearshape")
-                .font(.system(size: 36))
-        }
-    }
+    TabBarExampleView()
 }

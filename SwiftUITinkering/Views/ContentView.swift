@@ -10,10 +10,13 @@ import RippleAnimation
 
 struct ContentView: View {
     
+    @State private var isPresented = false
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                NavigationLink("Saved", value: "SavedView")
+//                NavigationLink("Saved", value: "SavedView")
+                Button("Saved") { isPresented.toggle() }
                 NavigationLink("Tab bar", value: "TabBar")
                 NavigationLink("Custom shapes", value: "CustomShapes")
                 NavigationLink("Drawing", value: "DrawingView")
@@ -35,6 +38,9 @@ struct ContentView: View {
                 default:
                     Text("Unknown destination: \(string)")
                 }
+            }
+            .fullScreenCover(isPresented: $isPresented) {
+                SavedView()
             }
         }
     }
