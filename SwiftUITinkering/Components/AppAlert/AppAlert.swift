@@ -7,8 +7,10 @@
 
 import SwiftUI
 
-enum AppAlertRole {
-    case success, warning, failure
+enum AppAlertRole: String, CaseIterable {
+    case success
+    case warning
+    case failure
     
     var color: Color {
         switch self {
@@ -32,6 +34,7 @@ struct AppAlert: ViewModifier {
     let role: AppAlertRole
     let title: String
     let subTitle: String?
+    var cornerRadius: CGFloat = 20
     
     let disappearDelay: Int = 4
     
@@ -40,31 +43,30 @@ struct AppAlert: ViewModifier {
     
     func body(content: Content) -> some View {
         content
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .allowsHitTesting(!keep)
             .blur(radius: keep ? 5 : 0)
             .overlay {
                 if isPresented {
                     VStack {
-                        AppAlertView(role: role, title: title, subTitle: subTitle, keep: $keep)
+                        AppAlertView(role: role, title: title, subTitle: subTitle, keep: $keep, isPresented: $isPresented)
                         Spacer()
                     }
-                    .transition(. move(edge: .top))
+                    .transition(.move(edge: .top))
                     .animation(.easeInOut, value: isPresented)
-                    .onAppear {
-                        Task {
-                            try await Task.sleep(for: .seconds(disappearDelay))
-                            guard !keep else { return }
+                    .task(id: keep) {
+                        try? await Task.sleep(for: .seconds(disappearDelay))
+                        
+                        if isPresented && !keep {
                             withAnimation {
                                 isPresented = false
+                                keep = false
                             }
                         }
                     }
-                    .onChange(of: keep) {
-                        Task {
-                            try await Task.sleep(for: .seconds(disappearDelay))
-                            guard !keep else { return }
-                            withAnimation {
-                                isPresented = false
-                            }
+                    .onChange(of: isPresented) { oldValue, newValue in
+                        if !newValue {
+                            keep = false
                         }
                     }
                 }
@@ -77,49 +79,71 @@ struct AppAlertView: View {
     let role: AppAlertRole
     let title: String
     var subTitle: String?
+    var cornerRadius: CGFloat = 20
     
     @State private var isUnfolded: Bool = false
-    @State private var multiplier: CGFloat = 0
+    @State private var multiplier: CGFloat = 0 {
+        didSet { print(multiplier) }
+    }
     @Binding var keep: Bool
+    @Binding var isPresented: Bool
     
     var body: some View {
         let width: CGFloat = 320
-//        var multiplier: CGFloat = 0
-//        let height: CGFloat = isUnfolded ? 300 : 60 + multiplier
-        RoundedRectangle(cornerRadius: 10)
+        RoundedRectangle(cornerRadius: cornerRadius)
             .opacity(0.7)
             .frame(
-                maxWidth: isUnfolded ? width + 30 : width,
-                maxHeight: isUnfolded ? 300 : 60 + multiplier
+                maxWidth:  isUnfolded ? width + (multiplier + 30) : width,
+                maxHeight: isUnfolded ? (300 + multiplier)        : (60 + multiplier)
             )
             .overlay {
                 contents
             }
-            .onTapGesture {
-                keep.toggle()
-                withAnimation(.bouncy) {
-                    isUnfolded.toggle()
-                }
-            }
+//            .onTapGesture {
+                //                keep.toggle()
+                //                withAnimation(.bouncy) {
+                //                    isUnfolded.toggle()
+                //                }
+//            }
             .gesture(
                 DragGesture()
-                    .onChanged{ value in
-                        guard !isUnfolded else { return }
-                        if keep == false {
-                            keep.toggle()
+                    .onChanged { value in
+                        performOnDrag(value)
+                    }
+                    .onEnded { _ in
+                        withAnimation(.bouncy) {
+                            multiplier = 0
                         }
-                        print(multiplier)
-                        multiplier = (value.translation.height / 100)
                     }
             )
-            .onChange(of: multiplier) { oldValue, newValue in
-                if newValue > 3.2 {
-                    withAnimation(.bouncy) {
-                        isUnfolded.toggle()
-                        keep = true
-                    }
+    }
+    
+    
+    func performOnDrag(_ value: DragGesture.Value) {
+        var statement = false
+        if isUnfolded {
+            
+            statement = value.translation.height < multiplier && multiplier < -2
+            
+        } else {
+            
+            statement = value.translation.height > multiplier && multiplier > 3.2
+            
+        }
+        
+        if keep == isUnfolded {
+            if statement {
+                guard isPresented else { return }
+                withAnimation(.bouncy) {
+                    keep = !isUnfolded
+                    isUnfolded = !isUnfolded
                 }
             }
+        }
+        withAnimation(.bouncy) {
+            multiplier = (value.translation.height / 80)
+        }
+        
     }
     
     @ViewBuilder
@@ -145,7 +169,9 @@ struct AppAlertView: View {
                 )
             
             if let subTitle, isUnfolded {
+                
                 Text(subTitle)
+                    .frame(width: size.width - 20)
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.white)
                     .position(
@@ -153,19 +179,19 @@ struct AppAlertView: View {
                         y: isUnfolded ? 200 : size.height / 2
                     )
                     .transition(.opacity)
+                
             }
             
         }
     }
-    
 }
 
 #Preview {
-    AppAlertView(role: .success, title: "Payment successful!", keep: .constant(false))
+    AppAlertView(role: .success, title: "Payment successful!", keep: .constant(false), isPresented: .constant(true))
 }
 
 #Preview("Landscape", traits: .landscapeRight) {
-    AppAlertView(role: .failure, title: "Payment failed.", keep: .constant(false))
+    AppAlertView(role: .failure, title: "Payment failed.", keep: .constant(false), isPresented: .constant(true))
 }
 
 #Preview("TestPreview") {
