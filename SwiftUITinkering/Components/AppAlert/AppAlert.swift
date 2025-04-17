@@ -30,22 +30,22 @@ enum AppAlertRole: String, CaseIterable {
 }
 
 struct AppAlert: ViewModifier {
-    
     let role: AppAlertRole
     let title: String
     let subTitle: String?
     var cornerRadius: CGFloat = 20
-    
-    let disappearDelay: Int = 4
-    
+
+    let disappearDelay: TimeInterval = 4
+
     @Binding var isPresented: Bool
     @State private var keep = false
-    
+    @State private var dismissWorkItem: DispatchWorkItem?
+
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .allowsHitTesting(!keep)
-            .blur(radius: keep ? 5 : 0)
+            .allowsHitTesting(!isPresented)
+            .blur(radius: isPresented ? 5 : 0)
             .overlay {
                 if isPresented {
                     VStack {
@@ -54,25 +54,38 @@ struct AppAlert: ViewModifier {
                     }
                     .transition(.move(edge: .top))
                     .animation(.easeInOut, value: isPresented)
-                    .task(id: keep) {
-                        try? await Task.sleep(for: .seconds(disappearDelay))
-                        
-                        if isPresented && !keep {
-                            withAnimation {
-                                isPresented = false
-                                keep = false
-                            }
+                    .onAppear { scheduleDismissal() }
+                    .onChange(of: role) { _, _ in scheduleDismissal() }
+                    .onChange(of: isPresented) { _, presented in
+                        if !presented {
+                            dismissWorkItem?.cancel()
                         }
                     }
-                    .onChange(of: isPresented) { oldValue, newValue in
-                        if !newValue {
-                            keep = false
-                        }
+                    .onChange(of: keep) { oldValue, newValue in
+                        scheduleDismissal()
                     }
                 }
             }
     }
+
+    private func scheduleDismissal() {
+        // Cancel any pending dismissal
+        dismissWorkItem?.cancel()
+
+        // Create a new work item
+        let workItem = DispatchWorkItem {
+            guard !keep else { return }
+            withAnimation {
+                isPresented = false
+            }
+        }
+        dismissWorkItem = workItem
+
+        // Schedule it
+        DispatchQueue.main.asyncAfter(deadline: .now() + disappearDelay, execute: workItem)
+    }
 }
+
 
 struct AppAlertView: View {
     

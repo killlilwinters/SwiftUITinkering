@@ -42,6 +42,7 @@ struct ContentView: View {
                             isAlertPresented.toggle()
                         }
                     }
+                    .allowsHitTesting(!isAlertPresented)
                     Picker("Pick a type", selection: $selectedRole) {
                         ForEach(AppAlertRole.allCases, id: \.rawValue) { c in
                             Text(c.rawValue.capitalized).tag(c)
