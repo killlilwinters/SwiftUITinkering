@@ -25,16 +25,8 @@ struct HapticProvider {
         do { try engine.start() } catch { throw .engineUnavailable }
     }
     
-    func performSuccess() {
-        eventGenerator.notificationOccurred(.success)
-    }
-    
-    func performFailure() {
-        eventGenerator.notificationOccurred(.error)
-    }
-    
-    func performWarning() {
-        eventGenerator.notificationOccurred(.warning)
+    func perform(_ type: UINotificationFeedbackGenerator.FeedbackType) {
+        eventGenerator.notificationOccurred(type)
     }
     
     func performLightTap() throws {
@@ -79,4 +71,22 @@ struct HapticProvider {
         ]
     }
     
+}
+
+// MARK: - Deprecated
+extension HapticProvider {
+    @available(*, deprecated, message: "Use perform(.success) instead" )
+    func performSuccess() {
+        eventGenerator.notificationOccurred(.success)
+    }
+    
+    @available(*, deprecated, message: "Use perform(.error) instead" )
+    func performFailure() {
+        eventGenerator.notificationOccurred(.error)
+    }
+    
+    @available(*, deprecated, message: "Use perform(.warning) instead" )
+    func performWarning() {
+        eventGenerator.notificationOccurred(.warning)
+    }
 }

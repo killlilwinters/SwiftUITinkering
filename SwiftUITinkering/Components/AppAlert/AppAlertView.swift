@@ -50,9 +50,9 @@ struct AppAlertView: View {
     
     private func performAppearanceHaptics() {
         switch role {
-        case .success: haptics?.performSuccess()
-        case .warning: haptics?.performWarning()
-        case .failure: haptics?.performFailure()
+        case .success: /*haptics?.performSuccess()*/ haptics?.perform(.success)
+        case .warning: /*haptics?.performWarning()*/ haptics?.perform(.warning)
+        case .error:   /*haptics?.performFailure()*/ haptics?.perform(.error)
         }
     }
     
@@ -131,7 +131,7 @@ private extension View {
         switch role {
         case .success: self.symbolEffect(.bounce, options: .nonRepeating)
         case .warning: self.symbolEffect(.pulse, options: .nonRepeating)
-        case .failure: self.symbolEffect(.wiggle, options: .nonRepeating)
+        case .error: self.symbolEffect(.wiggle, options: .nonRepeating)
         }
     }
 }
@@ -142,5 +142,5 @@ private extension View {
 }
 
 #Preview("Landscape", traits: .landscapeRight) {
-    AppAlertView(role: .failure, title: "Payment failed.", keep: .constant(false), isPresented: .constant(true))
+    AppAlertView(role: .error, title: "Payment failed.", keep: .constant(false), isPresented: .constant(true))
 }
