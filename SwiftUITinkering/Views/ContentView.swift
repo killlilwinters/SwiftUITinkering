@@ -19,7 +19,7 @@ struct ContentView: View {
         switch selectedRole {
         case .success: "Payment successful!"
         case .warning: "Something went wrong..."
-        case .failure: "Insufficient funds!"
+        case .error: "Insufficient funds!"
         }
     }
     
