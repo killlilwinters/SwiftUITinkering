@@ -39,8 +39,8 @@ struct HighlightedText: View {
         var result = Text("")
         
         for (index, word) in text.components(separatedBy: " ").enumerated() {
-            let word = word.lowercased()
             let str = index == 0 ? word : " " + word
+            let word = word.lowercased()
             
             let style = highlightedText.first(where: {
                 $0.key.contains { str in
