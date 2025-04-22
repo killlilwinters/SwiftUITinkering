@@ -4,6 +4,8 @@
 //
 //  Created by Maks Winters on 22.04.2025.
 //
+// https://stackoverflow.com/a/74983148
+//
 
 import SwiftUI
 
@@ -34,7 +36,7 @@ struct HighlightedText: View {
     }
     
     func process() -> Text {
-        guard !highlightedText.isEmpty && !text.isEmpty else { return Text("") }
+        guard !highlightedText.isEmpty && !text.isEmpty else { return Text(text) }
         
         var result = Text("")
         
