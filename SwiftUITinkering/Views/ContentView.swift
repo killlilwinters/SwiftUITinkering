@@ -31,6 +31,7 @@ struct ContentView: View {
                 NavigationLink("Custom shapes", value: "CustomShapes")
                 NavigationLink("Drawing", value: "DrawingView")
                 NavigationLink("Nesting list rows", value: "NestingListRows")
+                NavigationLink("HighlightView", value: "HighlightTestView")
                 HStack {
                     Button("Show alert") {
                         withAnimation {
@@ -65,6 +66,8 @@ struct ContentView: View {
                     DrawingView()
                 case "NestingListRows":
                     NestingListRowsView()
+                case "HighlightTestView":
+                    HighlightTestView(mode: .highlight)
                 default:
                     Text("Unknown destination: \(string)")
                 }

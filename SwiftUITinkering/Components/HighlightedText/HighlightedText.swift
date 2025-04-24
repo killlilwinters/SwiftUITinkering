@@ -1,33 +1,13 @@
 //
-//  RendererTestView.swift
+//  HighlightedText.swift
 //  SwiftUITinkering
 //
-//  Created by Maks Winters on 22.04.2025.
-//
-// https://stackoverflow.com/a/74983148
+//  Created by Maks Winters on 23.04.2025.
 //
 
 import SwiftUI
 
-struct RendererTestView: View {
-    
-    let text = """
-        This is a test text
-        for testing the text renderer
-    """
-    
-    let values = [
-        ["Test"]: Color.blue.gradient,
-        ["for", "a"]: Color.red.gradient
-    ]
-    
-    var body: some View {
-        HighlightedText(text: text, highlightedText: values)
-    }
-}
-
 struct HighlightedText: View {
-    
     let text: String
     let highlightedText: Dictionary<[String], any ShapeStyle>
     
@@ -35,18 +15,17 @@ struct HighlightedText: View {
         process()
     }
     
-    func process() -> Text {
+    private func process() -> Text {
         guard !highlightedText.isEmpty && !text.isEmpty else { return Text(text) }
         
         var result = Text("")
         
-        for (index, word) in text.components(separatedBy: " ").enumerated() {
+        for (index, word) in text.components(separatedBy: .whitespaces).enumerated() {
             let str = index == 0 ? word : " " + word
-            let word = word.lowercased()
             
             let style = highlightedText.first(where: {
                 $0.key.contains { str in
-                    str.lowercased() == word
+                    str.lowercased() == word.lowercased().trimmingCharacters(in: .newlines)
                 }
             })?.value
             
@@ -61,8 +40,4 @@ struct HighlightedText: View {
         return result
     }
     
-}
-
-#Preview(traits: .sizeThatFitsLayout) {
-    RendererTestView()
 }
