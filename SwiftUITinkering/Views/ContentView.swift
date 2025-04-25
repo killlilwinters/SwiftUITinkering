@@ -67,7 +67,7 @@ struct ContentView: View {
                 case "NestingListRows":
                     NestingListRowsView()
                 case "HighlightTestView":
-                    HighlightTestView(mode: .highlight)
+                    HighlightTestView()
                 default:
                     Text("Unknown destination: \(string)")
                 }

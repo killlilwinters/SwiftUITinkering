@@ -16,28 +16,46 @@ struct HighlightedText: View {
     }
     
     private func process() -> Text {
-        guard !highlightedText.isEmpty && !text.isEmpty else { return Text(text) }
+        guard !highlightedText.isEmpty && !text.isEmpty else {
+            return Text(text)
+        }
         
         var result = Text("")
         
-        for (index, word) in text.components(separatedBy: .whitespaces).enumerated() {
-            let str = index == 0 ? word : " " + word
+        // 1. Split the raw string into lines (keeping empty lines)
+        let lines = text.components(separatedBy: .newlines)
+        
+        // 2. Iterate lines & then words
+        for (lineIndex, line) in lines.enumerated() {
+            let words = line.components(separatedBy: " ")
             
-            let style = highlightedText.first(where: {
-                $0.key.contains { str in
-                    str.lowercased() == word.lowercased().trimmingCharacters(in: .newlines)
+            for (wordIndex, word) in words.enumerated() {
+                // Determine spacer: newline at start of every line except the first,
+                // space between words otherwise, nothing before the very first word.
+                let spacer: Text = {
+                    if lineIndex == 0 && wordIndex == 0 {
+                        return Text("")
+                    } else if wordIndex == 0 {
+                        return Text("\n")
+                    } else {
+                        return Text(" ")
+                    }
+                }()
+                
+                // Look up a style for this word (case-insensitive)
+                let style = highlightedText.first { pair in
+                    pair.key.contains { $0.lowercased() == word.lowercased() }
+                }?.value
+                
+                if let style {
+                    result = result + spacer + Text(word).foregroundStyle(style).bold()
+                } else {
+                    result = result + spacer + Text(word)
                 }
-            })?.value
-            
-            if let style {
-                result = result + Text(str).foregroundStyle(style).bold()
-            } else {
-                result = result + Text(str)
+                
             }
             
         }
-        
         return result
     }
-    
 }

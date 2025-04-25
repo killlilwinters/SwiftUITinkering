@@ -32,74 +32,75 @@ struct HLBackgroundText: View {
     }
     
     private func process() -> Text {
-        guard !highlightedText.isEmpty && !text.isEmpty else { return Text(text) }
+        guard !highlightedText.isEmpty && !text.isEmpty else {
+            return Text(text)
+        }
         
         var result = Text("")
         
-        // Check for new lines and keep track of where they are
-        var newLineIndexes: Set<Int> = .init()
-        for (index, word) in text.components(separatedBy: .whitespaces).enumerated() {
-            if word.contains("\n") {
-                newLineIndexes.insert(index + 1)
-            }
-        }
+        // 1. Split the raw string into lines (keeping empty lines)
+        let lines = text.components(separatedBy: .newlines)
         
-        for (index, word) in text.components(separatedBy: .whitespacesAndNewlines).enumerated() {
-            // Set a style intended for the current word (Optional<any ShapeStyle>)
-            let style = highlightedText.first(where: {
-                $0.key.contains { str in
-                    str.lowercased() == word.lowercased()
+        // 2. Iterate lines & then words
+        for (lineIndex, line) in lines.enumerated() {
+            let words = line.components(separatedBy: " ")
+            
+            for (wordIndex, word) in words.enumerated() {
+                // Determine spacer: newline at start of every line except the first,
+                // space between words otherwise, nothing before the very first word.
+                let spacer: Text = {
+                    if lineIndex == 0 && wordIndex == 0 {
+                        return Text("")
+                    } else if wordIndex == 0 {
+                        return Text("\n")
+                    } else {
+                        return Text(" ")
+                    }
+                }()
+                
+                // Look up a style for this word (case-insensitive)
+                let style = highlightedText.first { pair in
+                    pair.key.contains { $0.lowercased() == word.lowercased() }
+                }?.value
+                
+                // Append styled or plain word
+                if let gradient = style as? AnyGradient {
+                    result = result + spacer + Text(word)
+                        .customAttribute(Highlight(style: gradient))
+                } else if let color = style as? Color {
+                    result = result + spacer + Text(word)
+                        .customAttribute(Highlight(style: color))
+                } else {
+                    result = result + spacer + Text(word)
                 }
-            })?.value
-            
-            // Insert an appropriate spacer based
-            var spacer = Text(" ")
-            if index == 0 {
-                spacer = Text("")
-            } else if newLineIndexes.contains(index) {
-                spacer = Text("\n")
             }
-            
-            // Check if the style exists for this word
-            // if it is nil - just insert the word with no effects
-            guard let style else { result = result + spacer + Text(word); continue }
-            
-            // Type cast the style and apply it
-            if let style = style as? AnyGradient {
-                result = result + spacer + Text(word).customAttribute(Highlight(style: style))
-            } else if let style = style as? Color {
-                result = result + spacer + Text(word).customAttribute(Highlight(style: style))
-            } else {
-                result = result + spacer + Text(word)
-            }
-            
         }
         
         return result
     }
     
-}
-
-struct HighlightRenderer: TextRenderer {
-    func draw(layout: Text.Layout, in ctx: inout GraphicsContext) {
-        for line in layout {
-            
-            for run in line {
-                let context = ctx
-                let rect = Rectangle().path(in: run.typographicBounds.rect)
+    struct HighlightRenderer: TextRenderer {
+        func draw(layout: Text.Layout, in ctx: inout GraphicsContext) {
+            for line in layout {
                 
-                if let highlight: Highlight<AnyGradient> = run[Highlight.self] {
-                    context.fill(rect, with: .style(highlight.style.opacity(0.7)))
-                } else if let highlight: Highlight<Color> = run[Highlight.self] {
-                    context.fill(rect, with: .style(highlight.style.opacity(0.7)))
+                for run in line {
+                    let context = ctx
+                    let rect = Rectangle().path(in: run.typographicBounds.rect)
+                    
+                    if let highlight: Highlight<AnyGradient> = run[Highlight.self] {
+                        print("AnyGradient")
+                        context.fill(rect, with: .style(highlight.style.opacity(0.7)))
+                    } else if let highlight: Highlight<Color> = run[Highlight.self] {
+                        print("Color")
+                        context.fill(rect, with: .style(highlight.style.opacity(0.7)))
+                    }
+                    context.draw(run)
+                    
                 }
-                context.draw(run)
                 
             }
-            
         }
+        
+        
     }
-    
-    
 }
-
