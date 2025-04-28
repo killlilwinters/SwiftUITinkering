@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AppAlertView: View {
+//    @Environment(\.self) var environment
     let haptics = try? HapticProvider()
     
     let role: AppAlertRole
@@ -90,6 +91,7 @@ struct AppAlertView: View {
             
             Image(systemName: role.imageName)
                 .foregroundStyle(role.color)
+//                .colorScheme(environment.colorScheme == .dark ? .light : .dark)
                 .font(.system(
                     size: isUnfolded ? 50 : 30
                 ))
